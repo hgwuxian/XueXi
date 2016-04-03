@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">XueXi</string>
     <string name="action_settings">Settings</string>
+    //translatable 表示翻译时不翻译他
+    <string name="action_refresh" translatable="false">Refres</string>
 </resources>
