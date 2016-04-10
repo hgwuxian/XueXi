@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
     //translatable 表示翻译时不翻译他
     <string name="action_refresh" translatable="false">Refres</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="hello_world">hello world</string>
 </resources>

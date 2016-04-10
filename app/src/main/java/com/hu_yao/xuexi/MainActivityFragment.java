@@ -12,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -126,6 +128,15 @@ public class MainActivityFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_frecast);
         //加载
         listView.setAdapter(mForecastAdapter);
+        //当点击项目时，会儿弹出 Toast
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String forcast = mForecastAdapter.getItem(position);
+                Toast tost = Toast.makeText(getActivity(), forcast, Toast.LENGTH_SHORT);
+                tost.show();
+            }
+        });
         return rootView;
     }
     class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
