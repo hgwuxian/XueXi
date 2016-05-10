@@ -5,4 +5,11 @@
     <string name="action_refresh" translatable="false">Refres</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="hello_world">hello world</string>
+    <string name="title_activity_settings">Settings</string>
+    <!-- Label for the location preference [CHAR LIMIT=30]  给用户看的名字 -->
+    <string name="pref_location_label">Location</string>
+    <!-- Key name for storing location in SharedPreferences [CHAR LIMIT=NONE] 数据保存名字 划分-->
+    <string name="pref_location_key" translatable="false">location</string>
+    <!-- Default postal code for location preference [CHAR LIMIT=NONE]  位置坐标设置 -->
+    <string name="pref_location_default" translatable="false">Chongqing</string>
 </resources>

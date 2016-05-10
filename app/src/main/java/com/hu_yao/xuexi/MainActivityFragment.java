@@ -1,8 +1,11 @@
 package com.hu_yao.xuexi;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -15,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,8 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -61,8 +61,7 @@ public class MainActivityFragment extends Fragment {
         int id = item.getItemId();
         //当点击发生时返回 true
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("Chongqing");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -72,15 +71,6 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String[] zhi = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
 //        //将数组赋予为List
 //        List<String> weekForecast = new ArrayList<>(Arrays.asList(zhi));
 //        //使用 ArrayAdapter ，并 public ArrayAdapter (Context context, int resource, int textViewResourceId, List<T> objects)
@@ -111,8 +101,6 @@ public class MainActivityFragment extends Fragment {
 //    class ViewHorld {
 //        public ListView listView;
 //    }
-        //将数组赋予为List
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(zhi));
 
         // 使用 ArrayAdapter ，并 public ArrayAdapter (Context context, int resource, int textViewResourceId, List<T> objects)
         mForecastAdapter =
@@ -120,7 +108,7 @@ public class MainActivityFragment extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_forecast, // The name of the layout ID.
                         R.id.list_item_forecast_textview, // The ID of the textview to populate.
-                        weekForecast);
+                        new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -128,16 +116,28 @@ public class MainActivityFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_frecast);
         //加载
         listView.setAdapter(mForecastAdapter);
-        //当点击项目时，会儿弹出 Toast
+        //当点击项目条目时，会儿弹出新的页面并刷新数据
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String forcast = mForecastAdapter.getItem(position);
-                Toast tost = Toast.makeText(getActivity(), forcast, Toast.LENGTH_SHORT);
-                tost.show();
+                Intent intent = new Intent(getActivity(),DetailActivity.class).putExtra(Intent.EXTRA_TEXT,forcast);
+                startActivity(intent);
+
             }
         });
         return rootView;
+    }
+    private void updateWeather(){
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+        weatherTask.execute(location);
+    }
+    public void onStart(){
+        super.onStart();
+        updateWeather();
     }
     class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
