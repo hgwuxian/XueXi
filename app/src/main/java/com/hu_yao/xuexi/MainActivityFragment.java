@@ -155,7 +155,15 @@ public class MainActivityFragment extends Fragment {
         /**
          * 准备天气的 high/lows 演示
          */
-        private String formatHighLows(double high, double low) {
+        private String formatHighLows(double high, double low,String unitType) {
+
+            if(unitType.equals(getString(R.string.pref_units_imperial))){
+                high = (high*1.8)+ 32;
+                low = (low *1.8) +32 ;
+            }else if (!unitType.equals(getString(R.string.pref_units_metric))){
+                Log.d(LOG_TAG, "Unit type not found: " + unitType);
+            }
+
             // Math.round () 控制其中数字，返回四舍五入参数为整数的结果
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
@@ -202,7 +210,15 @@ public class MainActivityFragment extends Fragment {
             // now we work exclusively in UTC
             dayTime = new Time();
 
+            //数据默认是在 metric
+            //我们一开始就在数据库中存取一个值
+
             String[] resultStrs = new String[numDays];
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String unitType = sharedPreferences.getString(
+                    getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_metric)
+            );
             for (int i = 0; i < weatherArray.length(); i++) {
                 // For now, using the format "Day, description, hi/low"
                 String day;
@@ -230,7 +246,7 @@ public class MainActivityFragment extends Fragment {
                 double high = temperatureObject.getDouble(OWM_MAX);
                 double low = temperatureObject.getDouble(OWM_MIN);
 
-                highAndLow = formatHighLows(high, low);
+                highAndLow = formatHighLows(high, low,unitType);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
